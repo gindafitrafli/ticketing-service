@@ -1,0 +1,43 @@
+package com.ginda.ticket.controller;
+
+import com.ginda.ticket.dto.Ticket;
+import com.ginda.ticket.dto.request.TicketOrder;
+import com.ginda.ticket.service.TicketService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Slf4j
+@RestController
+public class TicketController {
+
+    private final TicketService ticketService;
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
+
+    @GetMapping(value = "/ticket", produces = "application/json")
+    public ResponseEntity<List<Ticket>> getAllTicket() {
+        log.debug("getAllTicket");
+        return ResponseEntity.ok(ticketService.getAllTicket());
+    }
+
+    @PostMapping(value = "/ticket", consumes = "application/json")
+    public ResponseEntity<Void> createTicket(@RequestBody Ticket ticket)  {
+        log.debug("createTicket");
+
+        ticketService.createTicket(ticket);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/ticket/{ticketId}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<Void> orderTicket(@PathVariable int ticketId, @RequestBody TicketOrder ticketOrder) {
+        log.debug("orderTicket {} {} {}", ticketId, ticketOrder.getQuantity(), ticketOrder.getUserName());
+        ticketService.orderTicket(ticketId, ticketOrder);
+        return ResponseEntity.ok().build();
+    }
+
+}
