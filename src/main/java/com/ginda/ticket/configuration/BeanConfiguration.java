@@ -20,13 +20,13 @@ public class BeanConfiguration {
         return objectMapper;
     }
 
-    @Bean(name="entityManagerFactory")
-//    @DependsOn(value = "getSessionFactory")
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-
-        return sessionFactory;
-    }
+//    @Bean(name="entityManagerFactory")
+////    @DependsOn(value = "getSessionFactory")
+//    public LocalSessionFactoryBean sessionFactory() {
+//        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+//
+//        return sessionFactory;
+//    }
 //    @Bean
 //    public HibernateJpaSessionFactoryBean sessionFactory(EntityManagerFactory emf) {
 //        HibernateJpaSessionFactoryBean factory = new HibernateJpaSessionFactoryBean();

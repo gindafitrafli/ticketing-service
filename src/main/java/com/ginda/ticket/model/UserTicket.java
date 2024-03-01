@@ -17,6 +17,12 @@ public class UserTicket {
     @Column(name = "USER_ID")
     private int userId;
 
+    public UserTicket(int id, int ticketId, int userId) {
+        this.id = id;
+        this.ticketId = ticketId;
+        this.userId = userId;
+    }
+
     public int getId() {
         return id;
     }

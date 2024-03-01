@@ -2,17 +2,22 @@ package com.ginda.ticket.service;
 
 import com.ginda.ticket.dto.Ticket;
 import com.ginda.ticket.dto.request.TicketOrder;
+import com.ginda.ticket.exception.BadRequestException;
+import com.ginda.ticket.exception.NotFoundException;
 import com.ginda.ticket.model.MasterTicket;
 import com.ginda.ticket.model.MasterUser;
+import com.ginda.ticket.model.UserTicket;
 import com.ginda.ticket.repository.MasterTicketRepository;
 import com.ginda.ticket.repository.MasterUserRepository;
 import com.ginda.ticket.repository.UserTicketRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,19 +49,34 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void createTicket(Ticket ticket) {
-        ticket.setId(masterTicketRepository.getCurrentId() + 1);
+        ticket.setId(masterTicketRepository.findCurrentId().get(0) + 1);
         masterTicketRepository.save(convertTicketToMasterTicket(ticket));
     }
 
     @Override
     public void orderTicket(int ticketId, TicketOrder ticketOrder) {
-        addUser(ticketOrder);
+        MasterUser user = addUser(ticketOrder);
         var a = "and sales_begin >= :salesBegin and sales_end >= :salesEnd";
         Optional<MasterTicket> masterTicket = masterTicketRepository.findById(ticketId);
 
-        validateOder(ticketOrder, masterTicket);
-//        masterTicketRepository.updateAvailability();
+        try {
+            validateOder(ticketOrder, masterTicket);
+        } catch (Throwable e) {
+            log.error(e.getMessage(), e);
+        }
 
+        masterTicketRepository.updateAvailability(
+                masterTicket.get().getAvailability() - ticketOrder.getQuantity(),
+                ticketId
+        );
+
+        userTicketRepository.save(
+                new UserTicket(
+                        userTicketRepository.findCurrentId().get(0)+1,
+                        masterTicket.get().getId(),
+                        user.getId()
+                )
+        );
 
     }
 
@@ -78,19 +98,15 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private MasterTicket convertTicketToMasterTicket(Ticket ticket) {
-//        try {
-            return new MasterTicket(
-                    ticket.getId(),
-                    ticket.getName(),
-                    ticket.getAvailability(),
-                    ticket.getCapacity(),
-                    Timestamp.valueOf(ticket.getSalesBegin()),
-                    Timestamp.valueOf(ticket.getSalesEnd())
-            );
-//        } catch (ParseException e) {
-//            log.error(e.getMessage(), e);
-//            throw e;
-//        }
+        return new MasterTicket(
+                ticket.getId(),
+                ticket.getName(),
+                ticket.getAvailability(),
+                ticket.getCapacity(),
+                Timestamp.valueOf(ticket.getSalesBegin()),
+                Timestamp.valueOf(ticket.getSalesEnd())
+        );
+
     }
 
     private static String convertDateToDateString(long time) {
@@ -98,19 +114,31 @@ public class TicketServiceImpl implements TicketService {
         return SIMPLE_DATE_FORMAT.format(new Date(time));
     }
 
-    private void addUser(TicketOrder ticketOrder) {
+    private MasterUser addUser(TicketOrder ticketOrder) {
         if (masterUserRepository.findUserByName(ticketOrder.getUserName()).isEmpty()) {
-            masterUserRepository.save(
-                    new MasterUser(
-                            masterUserRepository.getCurrentId() + 1,
-                            ticketOrder.getUserName()
-                    )
+            MasterUser user = new MasterUser(
+                    masterUserRepository.findCurrentId().get(0) + 1,
+                    ticketOrder.getUserName()
             );
+            masterUserRepository.save(user);
+            return user;
         }
+        return masterUserRepository.findUserByName(ticketOrder.getUserName()).get();
     }
 
-    private void validateOder(TicketOrder ticketOrder, Optional<MasterTicket> masterTicket) {
-//        if
+    private void validateOder(TicketOrder ticketOrder, Optional<MasterTicket> masterTicket)
+            throws NotFoundException, BadRequestException {
+        if (masterTicket.isEmpty()) {
+            throw new NotFoundException("ticket not found.");
+        }
+        if (
+                masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == -1
+                        || masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == -1) {
+            throw new BadRequestException("ticket cannot be ordered.");
+        }
+        if (masterTicket.get().getCapacity()<ticketOrder.getQuantity()) {
+            throw new NotFoundException("limited ticket.");
+        }
     }
 
 }

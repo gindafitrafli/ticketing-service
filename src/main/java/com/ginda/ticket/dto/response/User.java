@@ -1,26 +1,14 @@
 package com.ginda.ticket.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 public class User {
-    private int id;
     private String name;
     private List<UserTicket> orderedTicket;
 
-    public User(int id, String name, List<UserTicket> orderedTicket) {
-        this.id = id;
+    public User(String name, List<UserTicket> orderedTicket) {
         this.name = name;
         this.orderedTicket = orderedTicket;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
