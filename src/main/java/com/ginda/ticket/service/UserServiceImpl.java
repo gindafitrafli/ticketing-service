@@ -32,13 +32,13 @@ public class UserServiceImpl implements UserService{
         if (user.isEmpty()) {
             throw new NotFoundException("user not found");
         }
-        List<UserTicket> userTicket = userTicketRepository.findUserTicketByUserId(user.get().getId());
-        List<MasterTicket> ticketName = masterTicketRepository
-                .findAllById(userTicket.stream().map(UserTicket::getTicketId).toList());
+//        List<UserTicket> userTicket = userTicketRepository.findUserTicketByUserId(user.get().getId());
+//        List<MasterTicket> ticketName = masterTicketRepository
+//                .findAllById(userTicket.stream().map(UserTicket::getTicketId).toList());
 
 
 
-
+        return null;
 
     }
 }
