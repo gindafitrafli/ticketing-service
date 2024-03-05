@@ -1,8 +1,10 @@
 package com.ginda.ticket.dto.request;
 
+
 public class TicketOrder {
     private String userName;
     private int quantity;
+    public TicketOrder() {}
 
     public String getUserName() {
         return userName;

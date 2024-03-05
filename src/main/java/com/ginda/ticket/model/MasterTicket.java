@@ -1,15 +1,16 @@
 package com.ginda.ticket.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "MASTER_TICKET")
 public class MasterTicket {
+    //todo use id generator, using default sequence from posgtresql
     @Id
     @Column(name = "ID")
     private int id;
@@ -24,13 +25,22 @@ public class MasterTicket {
     @Column(name = "SALES_END")
     private Timestamp salesEnd;
 
-    public MasterTicket(int id, String name, int availability, int capacity, Timestamp salesBegin, Timestamp salesEnd) {
+    @EqualsAndHashCode.Exclude @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ticket")
+    private List<UserTicket> orderedTickets;
+
+    public MasterTicket() {}
+
+    public MasterTicket(int id, String name, int availability, int capacity, Timestamp salesBegin, Timestamp salesEnd
+            ,List<UserTicket> orderedTickets
+    ) {
         this.id = id;
         this.name = name;
         this.availability = availability;
         this.capacity = capacity;
         this.salesBegin = salesBegin;
         this.salesEnd = salesEnd;
+        this.orderedTickets = orderedTickets;
     }
 
     public int getId() {
@@ -79,5 +89,13 @@ public class MasterTicket {
 
     public void setSalesEnd(Timestamp salesEnd) {
         this.salesEnd = salesEnd;
+    }
+
+    public List<UserTicket> getOrderedTickets() {
+        return orderedTickets;
+    }
+
+    public void setOrderedTickets(List<UserTicket> orderedTickets) {
+        this.orderedTickets = orderedTickets;
     }
 }

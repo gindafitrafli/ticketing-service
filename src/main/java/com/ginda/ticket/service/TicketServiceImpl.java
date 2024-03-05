@@ -4,6 +4,7 @@ import com.ginda.ticket.dto.Ticket;
 import com.ginda.ticket.dto.request.TicketOrder;
 import com.ginda.ticket.exception.BadRequestException;
 import com.ginda.ticket.exception.NotFoundException;
+import com.ginda.ticket.exception.UnprocessableEntityException;
 import com.ginda.ticket.model.MasterTicket;
 import com.ginda.ticket.model.MasterUser;
 import com.ginda.ticket.model.UserTicket;
@@ -11,8 +12,9 @@ import com.ginda.ticket.repository.MasterTicketRepository;
 import com.ginda.ticket.repository.MasterUserRepository;
 import com.ginda.ticket.repository.UserTicketRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -30,7 +32,7 @@ public class TicketServiceImpl implements TicketService {
     private final UserTicketRepository userTicketRepository;
     private final MasterTicketRepository masterTicketRepository;
     private final MasterUserRepository masterUserRepository;
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     public TicketServiceImpl(
             UserTicketRepository userTicketRepository,
@@ -50,31 +52,30 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void createTicket(Ticket ticket) {
         ticket.setId(masterTicketRepository.findCurrentId().get(0) + 1);
+        validateCreateTicket(ticket);
         masterTicketRepository.save(convertTicketToMasterTicket(ticket));
     }
 
+    @Transactional
     @Override
-    public void orderTicket(int ticketId, TicketOrder ticketOrder) {
+    public void orderTicket(String ticketName, TicketOrder ticketOrder) {
         MasterUser user = addUser(ticketOrder);
-        var a = "and sales_begin >= :salesBegin and sales_end >= :salesEnd";
-        Optional<MasterTicket> masterTicket = masterTicketRepository.findById(ticketId);
-
-        try {
-            validateOder(ticketOrder, masterTicket);
-        } catch (Throwable e) {
-            log.error(e.getMessage(), e);
-        }
+        Optional<MasterTicket> masterTicket = masterTicketRepository.findByName(ticketName);
+        validateOder(ticketOrder, masterTicket);
 
         masterTicketRepository.updateAvailability(
                 masterTicket.get().getAvailability() - ticketOrder.getQuantity(),
-                ticketId
+                masterTicket.get().getId()
         );
 
         userTicketRepository.save(
                 new UserTicket(
-                        userTicketRepository.findCurrentId().get(0)+1,
+                        userTicketRepository.findCurrentId().get(0) + 1,
                         masterTicket.get().getId(),
-                        user.getId()
+                        user.getId(),
+                        ticketOrder.getQuantity(),
+                        null
+                        , null //todo need checking
                 )
         );
 
@@ -101,10 +102,12 @@ public class TicketServiceImpl implements TicketService {
         return new MasterTicket(
                 ticket.getId(),
                 ticket.getName(),
-                ticket.getAvailability(),
+                ticket.getCapacity(),
                 ticket.getCapacity(),
                 Timestamp.valueOf(ticket.getSalesBegin()),
                 Timestamp.valueOf(ticket.getSalesEnd())
+                ,
+                null //todo need checking
         );
 
     }
@@ -118,7 +121,8 @@ public class TicketServiceImpl implements TicketService {
         if (masterUserRepository.findUserByName(ticketOrder.getUserName()).isEmpty()) {
             MasterUser user = new MasterUser(
                     masterUserRepository.findCurrentId().get(0) + 1,
-                    ticketOrder.getUserName()
+                    ticketOrder.getUserName(),
+                    null //todo need checking
             );
             masterUserRepository.save(user);
             return user;
@@ -126,8 +130,8 @@ public class TicketServiceImpl implements TicketService {
         return masterUserRepository.findUserByName(ticketOrder.getUserName()).get();
     }
 
-    private void validateOder(TicketOrder ticketOrder, Optional<MasterTicket> masterTicket)
-            throws NotFoundException, BadRequestException {
+    private void validateOder(TicketOrder ticketOrder, Optional<MasterTicket> masterTicket) {
+        log.error("invalid input.");
         if (masterTicket.isEmpty()) {
             throw new NotFoundException("ticket not found.");
         }
@@ -136,8 +140,18 @@ public class TicketServiceImpl implements TicketService {
                         || masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == -1) {
             throw new BadRequestException("ticket cannot be ordered.");
         }
-        if (masterTicket.get().getCapacity()<ticketOrder.getQuantity()) {
+        if (masterTicket.get().getCapacity() < ticketOrder.getQuantity() || masterTicket.get().getCapacity() < ticketOrder.getQuantity()) {
             throw new NotFoundException("limited ticket.");
+        }
+    }
+    private void validateCreateTicket(Ticket ticket) {
+        if (
+                ObjectUtils.isEmpty(ticket.getName()) ||
+                        ObjectUtils.isEmpty(ticket.getCapacity()) ||
+                        ObjectUtils.isEmpty(ticket.getSalesBegin()) ||
+                        ObjectUtils.isEmpty(ticket.getSalesEnd())
+        ) {
+            throw new UnprocessableEntityException("Invalid request body.");
         }
     }
 

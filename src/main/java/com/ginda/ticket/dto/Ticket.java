@@ -1,5 +1,8 @@
 package com.ginda.ticket.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Ticket {
     private int id;
     private String name;
@@ -7,6 +10,8 @@ public class Ticket {
     private int availability;
     private String salesBegin;
     private String salesEnd;
+
+    public Ticket() {}
 
     public Ticket(int id, String name, int capacity, int availability, String salesBegin, String salesEnd) {
         this.id = id;

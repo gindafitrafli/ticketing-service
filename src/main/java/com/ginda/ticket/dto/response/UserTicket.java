@@ -3,20 +3,12 @@ package com.ginda.ticket.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserTicket {
-    private int id;
     private String ticketName;
+    private int orderedAmount;
 
-    public UserTicket(int id, String ticketName) {
-        this.id = id;
+    public UserTicket(String ticketName, int orderedAmount) {
         this.ticketName = ticketName;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.orderedAmount = orderedAmount;
     }
 
     public String getTicketName() {
@@ -25,5 +17,13 @@ public class UserTicket {
 
     public void setTicketName(String ticketName) {
         this.ticketName = ticketName;
+    }
+
+    public int getOrderedAmount() {
+        return orderedAmount;
+    }
+
+    public void setOrderedAmount(int orderedAmount) {
+        this.orderedAmount = orderedAmount;
     }
 }

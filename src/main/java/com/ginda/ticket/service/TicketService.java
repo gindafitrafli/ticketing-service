@@ -18,5 +18,5 @@ public interface TicketService {
 
     void createTicket(Ticket ticket);
 
-    void orderTicket(int ticketId, TicketOrder ticketOrder);
+    void orderTicket(String ticketName, TicketOrder ticketOrder);
 }

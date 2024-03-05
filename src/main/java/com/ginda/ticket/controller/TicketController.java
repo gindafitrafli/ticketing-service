@@ -18,13 +18,13 @@ public class TicketController {
         this.ticketService = ticketService;
     }
 
-    @GetMapping(value = "/ticket", produces = "application/json")
+    @GetMapping(value = "/ticket", produces = {"application/json"})
     public ResponseEntity<List<Ticket>> getAllTicket() {
         log.debug("getAllTicket");
         return ResponseEntity.ok(ticketService.getAllTicket());
     }
 
-    @PostMapping(value = "/ticket", consumes = "application/json")
+    @PostMapping(value = "/ticket", consumes = {"application/json"})
     public ResponseEntity<Void> createTicket(@RequestBody Ticket ticket)  {
         log.debug("createTicket");
 
@@ -33,10 +33,10 @@ public class TicketController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/ticket/{ticketId}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Void> orderTicket(@PathVariable int ticketId, @RequestBody TicketOrder ticketOrder) {
-        log.debug("orderTicket {} {} {}", ticketId, ticketOrder.getQuantity(), ticketOrder.getUserName());
-        ticketService.orderTicket(ticketId, ticketOrder);
+    @PostMapping(value = "/ticket/{ticketName}", produces =  {"application/json"}, consumes = {"application/json"})
+    public ResponseEntity<Void> orderTicket(@PathVariable String ticketName, @RequestBody TicketOrder ticketOrder) {
+        log.debug("orderTicket {} {} {}", ticketName, ticketOrder.getQuantity(), ticketOrder.getUserName());
+        ticketService.orderTicket(ticketName, ticketOrder);
         return ResponseEntity.ok().build();
     }
 

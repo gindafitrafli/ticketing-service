@@ -17,7 +17,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/user/{userName}", produces = "application/json")
+    @GetMapping(value = "/user/{userName}", produces = {"application/json"})
     public ResponseEntity<User> getUserTicket(@PathVariable String userName) {
         log.debug("getUserTicket {}", userName);
         return ResponseEntity.ok(userService.getUserTicket(userName));
