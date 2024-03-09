@@ -137,7 +137,7 @@ public class TicketServiceImpl implements TicketService {
         }
         if (
                 masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == -1
-                        || masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == -1) {
+                        || masterTicket.get().getSalesEnd().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) == 1) {
             throw new BadRequestException("ticket cannot be ordered.");
         }
         if (masterTicket.get().getCapacity() < ticketOrder.getQuantity() || masterTicket.get().getCapacity() < ticketOrder.getQuantity()) {
