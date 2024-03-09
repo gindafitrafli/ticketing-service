@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "bc2506e0-61e0-44ec-8f19-ee99876604db",
+		"name": "Ticket booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13233572"
+	},
+	"item": [
+		{
+			"name": "Get User Ticket",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/user/namasayaginda",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"namasayaginda"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order Ticket",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testBody\": \"testBody\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ticket",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ticket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Ticket",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testBody\": \"testBody\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ticket/123123123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ticket",
+						"123123123"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Ticket",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
