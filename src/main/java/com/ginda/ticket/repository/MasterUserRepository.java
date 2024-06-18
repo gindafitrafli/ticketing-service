@@ -11,6 +11,4 @@ import java.util.Optional;
 @Repository
 public interface MasterUserRepository extends JpaRepository<MasterUser, Integer> {
     Optional<MasterUser> findUserByName(String userName);
-    @Query("select coalesce(max(id), 0) id from MasterUser")
-    List<Integer> findCurrentId();
 }

@@ -10,7 +10,4 @@ import java.util.List;
 @Repository
 public interface UserTicketRepository extends JpaRepository<UserTicket, Integer> {
     List<UserTicket> findUserTicketByUserId(int userId);
-
-    @Query("select coalesce(max(id), 0) id from UserTicket")
-    List<Integer> findCurrentId();
 }

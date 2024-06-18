@@ -1,8 +1,6 @@
 package com.ginda.ticket.model;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,9 +23,8 @@ public class MasterTicket {
     @Column(name = "SALES_END")
     private Timestamp salesEnd;
 
-    @EqualsAndHashCode.Exclude @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ticket")
-    private List<UserTicket> orderedTickets;
+/*    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ticket")
+    private List<UserTicket> orderedTickets;*/
 
     public MasterTicket() {}
 

@@ -13,13 +13,11 @@ import java.util.Optional;
 @Repository
 public interface MasterTicketRepository extends JpaRepository<MasterTicket, Integer> {
 
-    @Query("select coalesce(max(id), 0) id from MasterTicket")
-    List<Integer> findCurrentId();
 
     Optional<MasterTicket> findByName(String name);
 
-    @Query("update MasterTicket m set m.availability = :availability where m.id = :id")
-    @Modifying
-    void updateAvailability(@Param("availability")int availability, @Param("id")int id);
 
+    /*@Query("update MasterTicket m set m.availability = :availability where m.id = :id")
+    @Modifying
+    void updateAvailability(@Param("availability")int availability, @Param("id")int id);*/
 }

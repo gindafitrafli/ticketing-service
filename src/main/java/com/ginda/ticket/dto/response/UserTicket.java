@@ -1,7 +1,5 @@
 package com.ginda.ticket.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class UserTicket {
     private String ticketName;
     private int orderedAmount;

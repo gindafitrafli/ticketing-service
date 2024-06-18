@@ -30,17 +30,14 @@ public class UserServiceImpl implements UserService{
         if (userData.isEmpty()) {
             throw new NotFoundException("user not found");
         }
-
         return convertToUserResponse(userData.get());
-
     }
 
     private User convertToUserResponse(MasterUser userData) {
         List<UserTicket> userTickets = new ArrayList<>(userData.getOrderedTickets().size());
         userData.getOrderedTickets().forEach(userTicket ->
                 userTickets.add(new UserTicket(
-                        "",
-//                        userTicket.getTicket().getName(),
+                        userTicket.getTicket().getName(),
                         userTicket.getAmount()
                 ))
         );

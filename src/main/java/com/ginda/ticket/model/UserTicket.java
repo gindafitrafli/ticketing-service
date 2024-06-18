@@ -19,11 +19,11 @@ public class UserTicket {
     private int amount;
 
     @ManyToOne
-    @JoinColumn(name = "MASTER_USER.id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "USER_ID")
     private MasterUser user;
 
     @ManyToOne
-    @JoinColumn(name = "MASTER_TICKET.ID", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "TICKET_ID")
     private MasterTicket ticket;
 
     public UserTicket() {}
