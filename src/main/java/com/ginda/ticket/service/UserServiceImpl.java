@@ -34,13 +34,14 @@ public class UserServiceImpl implements UserService{
     }
 
     private User convertToUserResponse(MasterUser userData) {
-        List<UserTicket> userTickets = new ArrayList<>(userData.getOrderedTickets().size());
-        userData.getOrderedTickets().forEach(userTicket ->
-                userTickets.add(new UserTicket(
-                        userTicket.getTicket().getName(),
-                        userTicket.getAmount()
-                ))
-        );
-        return new User(userData.getName(), userTickets);
+//        List<UserTicket> userTickets = new ArrayList<>(userData.getOrderedTickets().size());
+//        userData.getOrderedTickets().forEach(userTicket ->
+//                userTickets.add(new UserTicket(
+//                        userTicket.getTicket().getName(),
+//                        userTicket.getAmount()
+//                ))
+//        );
+//        return new User(userData.getName(), userTickets);
+        return null;
     }
 }

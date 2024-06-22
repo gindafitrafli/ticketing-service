@@ -1,8 +1,12 @@
 package com.ginda.ticket.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Builder
+@Getter
+@Setter
 public class Ticket {
     private int id;
     private String name;
@@ -11,62 +15,4 @@ public class Ticket {
     private String salesBegin;
     private String salesEnd;
 
-    public Ticket() {}
-
-    public Ticket(int id, String name, int capacity, int availability, String salesBegin, String salesEnd) {
-        this.id = id;
-        this.name = name;
-        this.capacity = capacity;
-        this.availability = availability;
-        this.salesBegin = salesBegin;
-        this.salesEnd = salesEnd;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(int availability) {
-        this.availability = availability;
-    }
-
-    public String getSalesBegin() {
-        return salesBegin;
-    }
-
-    public void setSalesBegin(String salesBegin) {
-        this.salesBegin = salesBegin;
-    }
-
-    public String getSalesEnd() {
-        return salesEnd;
-    }
-
-    public void setSalesEnd(String salesEnd) {
-        this.salesEnd = salesEnd;
-    }
 }

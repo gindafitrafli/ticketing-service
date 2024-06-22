@@ -1,27 +1,13 @@
 package com.ginda.ticket.dto.response;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
 public class UserTicket {
     private String ticketName;
     private int orderedAmount;
-
-    public UserTicket(String ticketName, int orderedAmount) {
-        this.ticketName = ticketName;
-        this.orderedAmount = orderedAmount;
-    }
-
-    public String getTicketName() {
-        return ticketName;
-    }
-
-    public void setTicketName(String ticketName) {
-        this.ticketName = ticketName;
-    }
-
-    public int getOrderedAmount() {
-        return orderedAmount;
-    }
-
-    public void setOrderedAmount(int orderedAmount) {
-        this.orderedAmount = orderedAmount;
-    }
 }

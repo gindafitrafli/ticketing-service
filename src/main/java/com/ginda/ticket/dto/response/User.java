@@ -1,29 +1,16 @@
 package com.ginda.ticket.dto.response;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@Builder
 public class User {
     private String name;
     private List<UserTicket> orderedTicket;
 
-    public User(String name, List<UserTicket> orderedTicket) {
-        this.name = name;
-        this.orderedTicket = orderedTicket;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<UserTicket> getOrderedTicket() {
-        return orderedTicket;
-    }
-
-    public void setOrderedTicket(List<UserTicket> orderedTicket) {
-        this.orderedTicket = orderedTicket;
-    }
 }

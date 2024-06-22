@@ -5,10 +5,11 @@ import com.ginda.ticket.exception.NotFoundException;
 import com.ginda.ticket.exception.UnprocessableEntityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@org.springframework.web.bind.annotation.ControllerAdvice
-public class ControllerAdvice {
+@ControllerAdvice
+public class ProjectControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<Object> handleException(Throwable throwable) {
         if (throwable instanceof UnprocessableEntityException) {
