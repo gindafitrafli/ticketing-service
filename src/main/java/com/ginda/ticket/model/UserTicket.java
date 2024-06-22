@@ -1,9 +1,17 @@
 package com.ginda.ticket.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "USER_TICKET")
+@Builder
+@Getter
+@Setter
+@EqualsAndHashCode
 public class UserTicket {
 
     @Id

@@ -7,7 +7,6 @@ import com.ginda.ticket.exception.NotFoundException;
 import com.ginda.ticket.exception.UnprocessableEntityException;
 import com.ginda.ticket.model.MasterTicket;
 import com.ginda.ticket.model.MasterUser;
-import com.ginda.ticket.model.UserTicket;
 import com.ginda.ticket.repository.MasterTicketRepository;
 import com.ginda.ticket.repository.MasterUserRepository;
 import com.ginda.ticket.repository.UserTicketRepository;
@@ -45,24 +44,23 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> getAllTicket() {
+    public List<Ticket> getAllTicket(String ticketName, boolean isCurrentlyAvailable, int minQty) {
         return convertListOfMasterTicketToListOfTicket(masterTicketRepository.findAll());
     }
 
     @Override
     public void createTicket(Ticket ticket) {
-//        ticket.setId(masterTicketRepository.findCurrentId().get(0) + 1);
-//        validateCreateTicket(ticket);
-//        masterTicketRepository.save(convertTicketToMasterTicket(ticket));
+        validateCreateTicket(ticket);
+        masterTicketRepository.save(convertTicketToMasterTicket(ticket));
     }
 
     @Transactional
     @Override
     public void orderTicket(String ticketName, TicketOrder ticketOrder) {
-//        MasterUser user = addUser(ticketOrder);
-//        Optional<MasterTicket> masterTicket = masterTicketRepository.findByName(ticketName);
-//        validateOder(ticketOrder, masterTicket);
-//
+        MasterUser user = addUser(ticketOrder);
+        Optional<MasterTicket> masterTicket = masterTicketRepository.findByName(ticketName);
+        validateOder(ticketOrder, masterTicket);
+
 //        masterTicketRepository.updateAvailability(
 //                masterTicket.get().getAvailability() - ticketOrder.getQuantity(),
 //                masterTicket.get().getId()
@@ -75,88 +73,83 @@ public class TicketServiceImpl implements TicketService {
 //                        user.getId(),
 //                        ticketOrder.getQuantity(),
 //                        null
-//                        , null //todo need checking
+//                        , null
 //                )
 //        );
 
     }
 
     private List<Ticket> convertListOfMasterTicketToListOfTicket(List<MasterTicket> retrievedTicket) {
-//        List<Ticket> ticketList = new ArrayList<>(retrievedTicket.size());
-//        retrievedTicket.forEach(
-//                masterTicket -> ticketList.add(
-//                        new Ticket(
-//                                masterTicket.getId(),
-//                                masterTicket.getName(),
-//                                masterTicket.getCapacity(),
-//                                masterTicket.getAvailability(),
-//                                convertDateToDateString(masterTicket.getSalesBegin().getTime()),
-//                                convertDateToDateString(masterTicket.getSalesEnd().getTime())
-//                        )
-//                )
-//        );
-//        return ticketList;
-        return null;
+        List<Ticket> ticketList = new ArrayList<>(retrievedTicket.size());
+        retrievedTicket.forEach(
+                masterTicket -> ticketList.add(
+                        Ticket.builder()
+                                .id(masterTicket.getId())
+                                .name(masterTicket.getName())
+                                .availability(masterTicket.getAvailability())
+                                .capacity(masterTicket.getCapacity())
+                                .salesBegin(convertDatetimeToDatetimeString(masterTicket.getSalesBegin().getTime()))
+                                .salesEnd(convertDatetimeToDatetimeString(masterTicket.getSalesEnd().getTime()))
+                                .build()
+
+                )
+        );
+        return ticketList;
     }
 
     private MasterTicket convertTicketToMasterTicket(Ticket ticket) {
-//        return new MasterTicket(
-//                ticket.getId(),
-//                ticket.getName(),
-//                ticket.getCapacity(),
-//                ticket.getCapacity(),
-//                Timestamp.valueOf(ticket.getSalesBegin()),
-//                Timestamp.valueOf(ticket.getSalesEnd())
-//                ,
-//                null //todo need checking
-//        );
-
-        return null;
-
+        return MasterTicket.builder()
+                .name(ticket.getName())
+                .salesBegin(Timestamp.valueOf(ticket.getSalesBegin()))
+                .salesEnd(Timestamp.valueOf(ticket.getSalesEnd()))
+                .capacity(ticket.getCapacity())
+                .availability(ticket.getCapacity())
+                .build();
     }
 
-    private static String convertDateToDateString(long time) {
+    private static String convertDatetimeToDatetimeString(long time) {
 
         return SIMPLE_DATE_FORMAT.format(new Date(time));
     }
 
     private MasterUser addUser(TicketOrder ticketOrder) {
-//        if (masterUserRepository.findUserByName(ticketOrder.getUserName()).isEmpty()) {
-//            MasterUser user = new MasterUser(
-//                    masterUserRepository.findCurrentId().get(0) + 1,
-//                    ticketOrder.getUserName(),
-//                    null //todo need checking
-//            );
-//            masterUserRepository.save(user);
-//            return user;
-//        }
-//        return masterUserRepository.findUserByName(ticketOrder.getUserName()).get();
-    return null;
+        Optional<MasterUser> existingUser = masterUserRepository.findUserByName(ticketOrder.getUserName());
+        if (existingUser.isEmpty()) {
+            MasterUser newUser = MasterUser.builder().build();
+            masterUserRepository.save(newUser);
+            return newUser;
+        }
+        return existingUser.get();
+
     }
 
     private void validateOder(TicketOrder ticketOrder, Optional<MasterTicket> masterTicket) {
-//        log.error("invalid input.");
-//        if (masterTicket.isEmpty()) {
-//            throw new NotFoundException("ticket not found.");
-//        }
-//        if (
-//                masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) != -1
-//                        || masterTicket.get().getSalesEnd().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) != 1) {
-//            throw new BadRequestException("ticket cannot be ordered.");
-//        }
-//        if (masterTicket.get().getCapacity() < ticketOrder.getQuantity() || masterTicket.get().getCapacity() < ticketOrder.getQuantity()) {
-//            throw new NotFoundException("limited ticket.");
-//        }
+        log.error("invalid input.");
+        if (masterTicket.isEmpty()) {
+            throw new NotFoundException("ticket not found.");
+        }
+        if (
+                masterTicket.get().getSalesBegin().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) != -1
+                || masterTicket.get().getSalesEnd().compareTo(Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()))) != 1
+        ) {
+            throw new BadRequestException("ticket cannot be ordered.");
+        }
+        if (
+                masterTicket.get().getCapacity() < ticketOrder.getQuantity()
+                || masterTicket.get().getCapacity() < ticketOrder.getQuantity()
+        ) {
+            throw new NotFoundException("limited ticket.");
+        }
     }
     private void validateCreateTicket(Ticket ticket) {
-//        if (
-//                ObjectUtils.isEmpty(ticket.getName()) ||
-//                        ObjectUtils.isEmpty(ticket.getCapacity()) ||
-//                        ObjectUtils.isEmpty(ticket.getSalesBegin()) ||
-//                        ObjectUtils.isEmpty(ticket.getSalesEnd())
-//        ) {
-//            throw new UnprocessableEntityException("Invalid request body.");
-//        }
+        if (
+                ObjectUtils.isEmpty(ticket.getName()) ||
+                ObjectUtils.isEmpty(ticket.getCapacity()) ||
+                ObjectUtils.isEmpty(ticket.getSalesBegin()) ||
+                ObjectUtils.isEmpty(ticket.getSalesEnd())
+        ) {
+            throw new UnprocessableEntityException("Invalid request body.");
+        }
     }
 
 }

@@ -19,9 +19,13 @@ public class TicketController {
     }
 
     @GetMapping(value = "/ticket", produces = {"application/json"})
-    public ResponseEntity<List<Ticket>> getAllTicket() {
+    public ResponseEntity<List<Ticket>> getTicket(
+            @RequestParam(value = "name") String ticketName,
+            @RequestParam(value = "currently-available") boolean isCurrentlyAvailable,
+            @RequestParam(value = "min-qty") int minQty
+    ) {
         log.debug("getAllTicket");
-        return ResponseEntity.ok(ticketService.getAllTicket());
+        return ResponseEntity.ok(ticketService.getAllTicket(ticketName, isCurrentlyAvailable, minQty));
     }
 
     @PostMapping(value = "/ticket", consumes = {"application/json"})
